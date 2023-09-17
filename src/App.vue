@@ -5,6 +5,7 @@
 <style lang="scss">
 body{
   background-color: #000;
+  box-sizing: border-box;
 }
 #app {
   font-family: Roboto, Helvetica, Arial, sans-serif;
