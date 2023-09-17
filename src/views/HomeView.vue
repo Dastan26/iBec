@@ -42,13 +42,14 @@ const loadGames = async (apiKey) => {
   })
   return response
 }
+const curentPage = ref(1)
 
 const loadMoreGames = async () => {
   try {
     const response = await axios.get('https://api.rawg.io/api/games', {
       params: {
         key: apiKey,
-        page: 2
+        page: curentPage.value
       }
     })
     const newGames = response.data.results
@@ -56,6 +57,7 @@ const loadMoreGames = async () => {
     if (newGames.length > 0) {
       gameList.value = [...gameList.value, ...newGames]
       loadMore.value = true
+      curentPage.value++
     }
   } catch (error) {
     console.error('Error fetching more games', error)
@@ -145,21 +147,28 @@ const handleIntersection = (entries, observer) => {
 
     <main class="main">
       <div v-for="game in sortedGameList" :key="game.id" class="media">
-        <img class="media-img" :src="game.background_image" :alt="game.name" />
-        <div class="media-info">
-          <h2>{{ game.name }}</h2>
-          <div class="media-info__year">
-            <p>{{ game.released }}</p>
-            <div class="media-info__rate"> {{ game.rating }}</div>
+        <router-link  :to="{ name: 'About', params: { gameId: game.id } }">
+          <img class="media-img" :src="game.background_image" :alt="game.name" />
+          <div class="media-info">
+            <h2>{{ game.name }}</h2>
+            <div class="media-info__year">
+              <p>{{ game.released }}</p>
+              <div class="media-info__rate"> {{ game.rating }}</div>
+            </div>
           </div>
-        </div>
+        </router-link>
       </div>
-      <div ref="bottom" v-if="sortedGameList.length > 0"></div>
+      <div ref="bottom"></div>
     </main>
   </div>
 </template>
 
 <style lang="scss" scoped>
+
+a{
+  text-decoration: none;
+  color: inherit;
+}
 .header{
   margin-top: 35px;
   align-content: start;
@@ -238,6 +247,7 @@ const handleIntersection = (entries, observer) => {
       display: flex;
       align-items: center;
       justify-content: space-around;
+      padding-bottom: 10px;
 
       &__rate{
         background-color: seagreen;
